@@ -31,8 +31,8 @@ jobs:
       - name: Upload content 
         uses: actions/upload-artifact@v1
         with:
-          name: content
-          path: content
+          name: output
+          path: output
 
   publish:
     name: Publish
@@ -40,11 +40,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v1
+
       - name: Download previously built content
         uses: actions/download-artifact@v1
         with:
-          name: content
+          name: output
       
       - name: List contents
         run: |
-          ls content
+          ls output
+
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: messier16/messier16
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
