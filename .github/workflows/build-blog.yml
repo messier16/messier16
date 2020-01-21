@@ -1,11 +1,11 @@
-name: Greet Everyone
+name: Build blog
 # This workflow is triggered on pushes to the repository.
 on: [push]
 
 jobs:
   build:
     # Job name is Greeting
-    name: Greeting
+    name: Build
     # This job runs on Linux
     runs-on: ubuntu-latest
 
@@ -27,3 +27,24 @@ jobs:
       - name: Build blog
         run: |
           pipenv run pelican content
+
+      - name: Upload content 
+        uses: actions/upload-artifact@v1
+        with:
+          name: content
+          path: content
+
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download previously built content
+        uses: actions/download-artifact@v1
+        with:
+          name: content
+      
+      - name: List contents
+        run: |
+          ls content
